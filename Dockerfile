@@ -1,9 +1,7 @@
 FROM python:3.12.8-slim
 
-#Do not use env as this would persist after the build and would impact your containers, children images
 ARG DEBIAN_FRONTEND=noninteractive
 
-# force the stdout and stderr streams to be unbuffered.
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get -y update \
@@ -14,13 +12,14 @@ RUN apt-get -y update \
 
 WORKDIR /home/runner/app
 
+USER 10000
+
+ENV PATH="${PATH}:/home/runner/.local/bin"
+
 COPY ./  ./
 
 RUN pip install --no-cache-dir poetry==1.8.5 \
-    && poetry config virtualenvs.create false \
     && poetry install --only main
-
-USER 10000
 
 EXPOSE 8000
 
