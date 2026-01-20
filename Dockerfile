@@ -14,20 +14,16 @@ RUN apt-get -y update \
 
 WORKDIR /home/runner/app
 
-USER 10000
-
-ENV PATH="${PATH}:/home/runner/.local/bin"
-
 COPY ./  ./
 
-RUN pip install --upgrade pip \
-    && pip install --no-cache-dir poetry \
+RUN pip install --no-cache-dir poetry==1.8.5 \
     && poetry config virtualenvs.create false \
     && poetry install --only main
+
+USER 10000
 
 EXPOSE 8000
 
 ENTRYPOINT [ "poetry", "run" ]
 
-# YOUR CODE HERE
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
+CMD [ "sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port $PORT" ]
